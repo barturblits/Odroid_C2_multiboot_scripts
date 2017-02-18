@@ -1,20 +1,27 @@
 #!/bin/bash
 
 # README
-# Script for running after a ubuntu kernel update. It copies the kernel,
+# Script for running after an ubuntu kernel update. It copies the kernel,
 # uInitrd and meson64_odroidc2.dtb to the multiboot location
 # WARNING: This is not a universal working script yet, make sure it is adapted to your system
 
 # We're passed the version of the kernel being installed
 inst_kern=$1
 
-BOOT_DIR="/media/boot"
-MULTIBOOT_DIR="${BOOT_DIR}"/multiboot
+UBUNTU_BOOT_DIR="/boot"
+ODROID_BOOT_DIR="/media/boot"
+MULTIBOOT_DIR="${ODROID_BOOT_DIR}/multiboot"
 
-mv "${MULTIBOOT_DIR}"/uInitrd.linux "${MULTIBOOT_DIR}"/uInitrd.linux.bak
-mv "${MULTIBOOT_DIR}"/Image.linux "${MULTIBOOT_DIR}"/Image.linux.bak
-mv "${MULTIBOOT_DIR}"/meson64_odroidc2.dtb.linux "${MULTIBOOT_DIR}"/meson64_odroidc2.dtb.linux.bak
+# checking if /media/boot exists if so, then copy uInitrd there (should be Ubuntu)
+if [ -d "${MULTIBOOT_DIR}" ]; then
 
-cp "${BOOT_DIR}"/uInitrd "${MULTIBOOT_DIR}"/uInitrd.linux
-cp "${BOOT_DIR}"/Image "${MULTIBOOT_DIR}"/Image.linux
-cp "${BOOT_DIR}"/meson64_odroidc2.dtb "${MULTIBOOT_DIR}"/meson64_odroidc2.dtb.linux
+	# backup old multiboot files
+	mv "${MULTIBOOT_DIR}/uInitrd.ubuntu" "${MULTIBOOT_DIR}/uInitrd.ubuntu.bak"
+	mv "${MULTIBOOT_DIR}/Image.ubuntu" "${MULTIBOOT_DIR}/Image.ubuntu.bak"
+	mv "${MULTIBOOT_DIR}/meson64_odroidc2.dtb.ubuntu" "${MULTIBOOT_DIR}/meson64_odroidc2.dtb.ubuntu.bak"
+
+	# copy new boot files to multiboot
+	cp "${ODROID_BOOT_DIR}/uInitrd" "${MULTIBOOT_DIR}/uInitrd.ubuntu"
+	cp "${ODROID_BOOT_DIR}/Image" "${MULTIBOOT_DIR}/Image.ubuntu"
+	cp "${ODROID_BOOT_DIR}/meson64_odroidc2.dtb" "${MULTIBOOT_DIR}/meson64_odroidc2.dtb.ubuntu"
+fi

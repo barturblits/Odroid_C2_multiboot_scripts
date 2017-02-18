@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# README
+# Script for running after an initramfs update. 
+
+UBUNTU_BOOT_DIR="/boot"
+ODROID_BOOT_DIR="/media/boot"
+MULTIBOOT_DIR="${ODROID_BOOT_DIR}/multiboot"
+
+VERSION=$( uname -r )
+#VERSION=`uname -r`
+
+# passing the kernel version is required
+[ -z "$VERSION" ] && exit 1
+
+AARCH=$( uname -m )
+
+if [ "$AARCH" = "aarch64" ]; then
+        export ARCH="arm64"
+else
+        export ARCH="arm"
+fi
+
+mkimage -A $ARCH -O linux -T ramdisk -C none -a 0 -e 0 -n uInitrd -d "${UBUNTU_BOOT_DIR}/initrd.img-${VERSION}" "${UBUNTU_BOOT_DIR}/uInitrd-${VERSION}"
+
+# checking if /media boot exists if so, then copy uInitrd there (should be Ubuntu)
+if [ ! -d "${ODROID_BOOT_DIR}" ]; then
+        cp "${UBUNTU_BOOT_DIR}/uInitrd-${VERSION}" "${UBUNTU_BOOT_DIR}/uInitrd"
+else
+        cp "${UBUNTU_BOOT_DIR}/uInitrd-${VERSION}" "${ODROID_BOOT_DIR}/uInitrd"
+
+        if [ -d "${MULTIBOOT_DIR}" ]; then
+			mv "${MULTIBOOT_DIR}/uInitrd.ubuntu" "${MULTIBOOT_DIR}/uInitrd.ubuntu.bak.1"
+			cp "${ODROID_BOOT_DIR}/uInitrd" "${MULTIBOOT_DIR}/uInitrd.ubuntu"
+		fi
+fi
