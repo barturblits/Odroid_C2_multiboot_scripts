@@ -5,9 +5,10 @@
 
 UBUNTU_BOOT_DIR="/boot"
 ODROID_BOOT_DIR="/media/boot"
-MULTIBOOT_DIR="${ODROID_BOOT_DIR}/multiboot"
+MULTIBOOT_DIR="/media/multiboot/multiboot"
 
-VERSION=$( uname -r )
+VERSION=$version
+#echo $VERSION
 #VERSION=`uname -r`
 
 # passing the kernel version is required
@@ -30,7 +31,8 @@ else
         cp "${UBUNTU_BOOT_DIR}/uInitrd-${VERSION}" "${ODROID_BOOT_DIR}/uInitrd"
 
         if [ -d "${MULTIBOOT_DIR}" ]; then
-			mv "${MULTIBOOT_DIR}/uInitrd.ubuntu" "${MULTIBOOT_DIR}/uInitrd.ubuntu.bak.1"
+			mv "${MULTIBOOT_DIR}/uInitrd.ubuntu" "${MULTIBOOT_DIR}/uInitrd.ubuntu.bak"
 			cp "${ODROID_BOOT_DIR}/uInitrd" "${MULTIBOOT_DIR}/uInitrd.ubuntu"
 		fi
 fi
+
