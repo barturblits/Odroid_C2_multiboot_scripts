@@ -10,7 +10,7 @@ inst_kern=$1
 
 UBUNTU_BOOT_DIR="/boot"
 ODROID_BOOT_DIR="/media/boot"
-MULTIBOOT_DIR="${ODROID_BOOT_DIR}/multiboot"
+MULTIBOOT_DIR="/media/multiboot/multiboot"
 
 # checking if /media/boot exists if so, then copy uInitrd there (should be Ubuntu)
 if [ -d "${MULTIBOOT_DIR}" ]; then
